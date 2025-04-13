@@ -20,21 +20,29 @@ const LoginPage = ({ navigation }) => {
       Alert.alert("Error", "Email or Password not provided");
       return;
     }
-
+  
+    if (email.endsWith("@acpfridehub.com")) {
+      Alert.alert(
+        "Admin Detected",
+        "Please use the Admin Portal to login."
+      );
+      return;
+    }
+  
     try {
       const response = await fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const result = await response.json();
-
+  
       if (!response.ok) {
         Alert.alert("Login Failed", result.message || "Invalid credentials");
         return;
       }
-
+  
       Alert.alert("Success", "User Login Successful");
       navigation.navigate("Home");
     } catch (error) {
@@ -42,6 +50,7 @@ const LoginPage = ({ navigation }) => {
       console.error("Error: ", error);
     }
   };
+  
 
   return (
     <View style={styles.container}>

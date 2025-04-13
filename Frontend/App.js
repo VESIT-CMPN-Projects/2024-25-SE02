@@ -12,8 +12,8 @@ import Shop from "./components/Shop";
 import ItemDetails from "./components/ItemDetails";
 import EmergencyCall from "./components/EmergencyCall";
 import PaymentConfirmation from "./components/PaymentConfirmation";
-import AdminLoginPage from "./components/AdminLoginPage";
-import AdminPortal from "./components/AdminPortal";
+import AdminLoginPage from "./components/Admin/AdminLoginPage";
+import AdminPortal from "./components/Admin/AdminPortal";
 
 const Stack = createStackNavigator();
 
