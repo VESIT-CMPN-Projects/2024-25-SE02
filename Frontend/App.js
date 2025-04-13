@@ -12,6 +12,8 @@ import Shop from "./components/Shop";
 import ItemDetails from "./components/ItemDetails";
 import EmergencyCall from "./components/EmergencyCall";
 import PaymentConfirmation from "./components/PaymentConfirmation";
+import AdminLoginPage from "./components/Admin/AdminLoginPage";
+import AdminPortal from "./components/Admin/AdminPortal";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +32,8 @@ export default function App() {
         <Stack.Screen name="Shop" component={Shop} />
         <Stack.Screen name="ItemDetails" component={ItemDetails} />
         <Stack.Screen name="EmergencyCall" component={EmergencyCall} />
+        <Stack.Screen name="AdminLoginPage" component={AdminLoginPage} />
+        <Stack.Screen name="AdminPortal" component={AdminPortal} />
       </Stack.Navigator>
     </NavigationContainer>
   );

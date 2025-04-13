@@ -11,7 +11,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 
-const LoginPage = ({ navigation }) => {
+const AdminLoginPage = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -21,11 +21,8 @@ const LoginPage = ({ navigation }) => {
       return;
     }
   
-    if (email.endsWith("@acpfridehub.com")) {
-      Alert.alert(
-        "Admin Detected",
-        "Please use the Admin Portal to login."
-      );
+    if (!email.endsWith("@acpfridehub.com")) {
+      Alert.alert("Invalid Email", "Please use your ACPF RideHub admin email.");
       return;
     }
   
@@ -43,8 +40,8 @@ const LoginPage = ({ navigation }) => {
         return;
       }
   
-      Alert.alert("Success", "User Login Successful");
-      navigation.navigate("Home");
+      Alert.alert("Success", "Admin Login Successful");
+      navigation.navigate("AdminPortal");
     } catch (error) {
       Alert.alert("Error", "Something went wrong. Please try again later.");
       console.error("Error: ", error);
@@ -54,8 +51,8 @@ const LoginPage = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("../assets/logo.png")} style={styles.logo} />
-      <Text style={styles.title}>ACPF RideHub</Text>
+      <Image source={require("../../assets/logo.png")} style={styles.logo} />
+      <Text style={styles.title}>ACPF RideHub Admin Portal</Text>
       <Text style={styles.subtitle}>Welcome Back!</Text>
 
       <View style={styles.inputContainer}>
@@ -85,14 +82,6 @@ const LoginPage = ({ navigation }) => {
 
       <TouchableOpacity style={styles.loginButton} onPress={submitHandler}>
         <Text style={styles.loginText}>Login</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("AdminLoginPage")}>
-        <Text style={styles.loginText}>Switch to Admin Portal</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity style={styles.guestButton} onPress={() => navigation.navigate("Home")}>
-        <Text style={styles.guestText}>Continue as Guest</Text>
       </TouchableOpacity>
 
       <Text style={styles.signupText}>
@@ -188,4 +177,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginPage;
+export default AdminLoginPage;

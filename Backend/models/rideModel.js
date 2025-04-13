@@ -16,7 +16,7 @@ const rideSchema = new Schema({
   },
   date_time: {
     type: Date,
-    required: true,
+    required: false,
   },
   distance: {
     type: Number,
@@ -26,7 +26,7 @@ const rideSchema = new Schema({
   organizer_id: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    required: false,
   },
 });
 
