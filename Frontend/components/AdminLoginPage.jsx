@@ -11,7 +11,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 
-const LoginPage = ({ navigation }) => {
+const AdminLoginPage = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,33 +20,39 @@ const LoginPage = ({ navigation }) => {
       Alert.alert("Error", "Email or Password not provided");
       return;
     }
-
+  
+    if (!email.endsWith("@acpfridehub.com")) {
+      Alert.alert("Invalid Email", "Please use your ACPF RideHub admin email.");
+      return;
+    }
+  
     try {
       const response = await fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const result = await response.json();
-
+  
       if (!response.ok) {
         Alert.alert("Login Failed", result.message || "Invalid credentials");
         return;
       }
-
-      Alert.alert("Success", "User Login Successful");
-      navigation.navigate("Home");
+  
+      Alert.alert("Success", "Admin Login Successful");
+      navigation.navigate("AdminPortal");
     } catch (error) {
       Alert.alert("Error", "Something went wrong. Please try again later.");
       console.error("Error: ", error);
     }
   };
+  
 
   return (
     <View style={styles.container}>
       <Image source={require("../assets/logo.png")} style={styles.logo} />
-      <Text style={styles.title}>ACPF RideHub</Text>
+      <Text style={styles.title}>ACPF RideHub Admin Portal</Text>
       <Text style={styles.subtitle}>Welcome Back!</Text>
 
       <View style={styles.inputContainer}>
@@ -76,14 +82,6 @@ const LoginPage = ({ navigation }) => {
 
       <TouchableOpacity style={styles.loginButton} onPress={submitHandler}>
         <Text style={styles.loginText}>Login</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("AdminLoginPage")}>
-        <Text style={styles.loginText}>Switch to Admin Portal</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity style={styles.guestButton} onPress={() => navigation.navigate("Home")}>
-        <Text style={styles.guestText}>Continue as Guest</Text>
       </TouchableOpacity>
 
       <Text style={styles.signupText}>
@@ -179,4 +177,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginPage;
+export default AdminLoginPage;
