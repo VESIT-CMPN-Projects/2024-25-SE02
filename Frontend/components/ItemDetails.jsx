@@ -16,7 +16,7 @@ const ItemDetails = ({ route }) => {
       </View>
 
       <View style={styles.subConatiner}>
-        <Image source={item.image} style={styles.itemImage} />
+        <Image source={{ uri: item.image }} style={styles.itemImage} />
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemPrice}>₹ {item.price}</Text>
         <Text style={styles.subHeaders}>Select Size</Text>

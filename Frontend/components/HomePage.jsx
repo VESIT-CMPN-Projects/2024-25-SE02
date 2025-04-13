@@ -112,6 +112,14 @@ const HomePage = ({ navigation }) => {
             />
             <Text style={styles.actionText}>Donations</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate("EmergencyCall")}>
+            <MaterialIcons
+              name="call"
+              size={24}
+              color="red"
+            />
+            <Text style={styles.actionText}>Emergency Call</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Upcoming Events */}

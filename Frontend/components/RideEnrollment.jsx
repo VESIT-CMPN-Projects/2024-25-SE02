@@ -199,9 +199,6 @@ const RideEnrollment = ({ navigation, route }) => {
       <TouchableOpacity style={styles.registerButton} onPress={()=> {navigation.navigate("SuccessfulRegistration", { ride })}}>
         <Text style={styles.registerText}>Register Now</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registerButton} onPress={()=> {navigation.navigate("PaymentConfirmation", { ride })}}>
-        <Text style={styles.registerText}>Register Now</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 };
