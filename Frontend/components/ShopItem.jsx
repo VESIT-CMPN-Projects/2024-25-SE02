@@ -8,6 +8,7 @@ const ShopItem = ({ item, onViewDetailsButtonPressed }) => {
         <Image source={{ uri: item.image }} style={styles.itemImage} />
       </View>
       <Text style={styles.itemName}>{item.item_name}</Text>
+      <Text style={styles.itemType}>{item.item_type}</Text>
       <Text style={styles.itemPrice}>₹ {item.price}</Text>
       <TouchableOpacity 
         style={styles.viewDetailsButton} 
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     borderColor: "black",
     borderWidth: 3,
-    borderRadius: 20,
+    borderRadius: 30,
     paddingVertical: 20,
     paddingHorizontal: 25,
     marginHorizontal: 25,
@@ -39,19 +40,23 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "#D9D9D9",
-    borderRadius: 10,
+    borderRadius: 20,
     paddingVertical: 24,
     paddingHorizontal: 20,
-    marginBottom: 13
+    marginBottom: 18
   },
   itemImage: {
-    height: 200,
+    height: 220,
     width: 200,
     marginBottom: 15
   },
   itemName: {
     fontSize: 26,
     fontWeight: "bold",
+  },
+  itemType: {
+    fontSize: 20,
+    marginTop: 2
   },
   itemPrice: {
     fontSize: 24,
@@ -60,9 +65,10 @@ const styles = StyleSheet.create({
   },
   viewDetailsButton: {
     backgroundColor: "#0057FF",
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 15,
     marginTop: 12,
+    marginBottom: 7,
     borderRadius: 15,
     alignItems: "center",
     alignSelf: "center"

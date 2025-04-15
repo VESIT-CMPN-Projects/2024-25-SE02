@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { AuthContext } from "./AuthContext";
+import Constants from "expo-constants";
 
 const RideEnrollment = ({ navigation, route }) => {
+  const { user } = useContext(AuthContext)
   const ride = route.params?.ride;
 
   if (!ride) {
@@ -41,6 +45,34 @@ const RideEnrollment = ({ navigation, route }) => {
   const time = (datetime.getHours() > 12 ? datetime.getHours() - 12 : datetime.getHours()).toString().padStart(2, '0')
    + ":" + datetime.getMinutes().toString().padStart(2, '0')
    + " " + (datetime.getHours() >= 12 ? "PM" : "AM");
+
+  const enroll = () => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    const raw = JSON.stringify({
+      user_id: user._id,
+      ride_id: ride._id,
+      status: "Confirmed"
+    });
+    const requestOptions = {
+      body: raw,
+      method: "POST",
+      headers: myHeaders,
+      redirect: "follow"
+    };
+    fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/registrations`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      if(!result.success) {
+        console.log("Error : ", result.error);
+        Alert.alert("Error Occured", "Error occured while registering.\nPlease try again later.")
+        return;
+      }
+      navigation.navigate("SuccessfulRegistration", { ride })
+    }).catch(error => {
+      console.error("Error: ", error);
+    });
+  }
 
   return (
     <ScrollView
@@ -196,7 +228,7 @@ const RideEnrollment = ({ navigation, route }) => {
       </View>
 
       {/* Register Button */}
-      <TouchableOpacity style={styles.registerButton} onPress={()=> {navigation.navigate("SuccessfulRegistration", { ride })}}>
+      <TouchableOpacity style={styles.registerButton} onPress={()=> {enroll()}}>
         <Text style={styles.registerText}>Register Now</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -207,13 +239,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 40
+    paddingTop: "9%"
   },
 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 15,
+    paddingTop: 15,
     alignItems: "center",
     marginBottom: 10,
   },

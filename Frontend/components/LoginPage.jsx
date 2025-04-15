@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,11 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import { AuthContext } from "./AuthContext";
 
 const LoginPage = ({ navigation }) => {
+  const { login } = useContext(AuthContext)
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -44,6 +47,7 @@ const LoginPage = ({ navigation }) => {
       }
   
       Alert.alert("Success", "User Login Successful");
+      login(result.userData)
       navigation.navigate("Home");
     } catch (error) {
       Alert.alert("Error", "Something went wrong. Please try again later.");

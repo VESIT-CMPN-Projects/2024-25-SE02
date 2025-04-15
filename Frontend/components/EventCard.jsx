@@ -3,21 +3,31 @@ import React from 'react'
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 
 const EventCard = ({ ride, viewDetails }) => {
+  const datetime = new Date(ride.date_time);
+
+  const date = datetime.getDate().toString().padStart(2,'0')
+  + "-" + (datetime.getMonth() + 1).toString().padStart(2,'0')
+  + "-" + datetime.getFullYear();
+
+  const time = (datetime.getHours() > 12 ? datetime.getHours() - 12 : datetime.getHours()).toString().padStart(2, '0')
+   + ":" + datetime.getMinutes().toString().padStart(2, '0')
+   + " " + (datetime.getHours() >= 12 ? "PM" : "AM");
+
   return (
     <View style={styles.eventCard}>
       <View style={styles.detailsCard}>
-        <Text style={styles.eventTitle}>{ride.title}</Text>
+        <Text style={styles.eventTitle} numberOfLines={1}>{ride.ride_name}</Text>
         <View style={styles.detailsContainer}>
           <Image source={require("../assets/calendar.png")} style={styles.icon}></Image>
-          <Text style={styles.eventDetails}>{ride.date}</Text>
+          <Text style={styles.eventDetails}>{date}</Text>
         </View>
         <View style={styles.detailsContainer}>
           <Image source={require("../assets/clock.png")} style={styles.icon}></Image>
-          <Text style={styles.eventDetails}>{ride.time}</Text>
+          <Text style={styles.eventDetails}>{time}</Text>
         </View>
         <View style={styles.detailsContainer}>
           <Image source={require("../assets/location.png")} style={styles.icon}></Image>
-          <Text style={styles.eventDetails}>{ride.location}</Text>
+          <Text style={styles.eventDetails} numberOfLines={1}>{ride.start_location}</Text>
         </View>
       </View>
 
@@ -33,6 +43,8 @@ export default EventCard;
 const styles = StyleSheet.create({
   eventCard: {
     backgroundColor: "#f8f9fa",
+    borderWidth: 1,
+    borderColor: "#DEDEDE",
     padding: 10,
     borderRadius: 10,
     marginRight: 10,

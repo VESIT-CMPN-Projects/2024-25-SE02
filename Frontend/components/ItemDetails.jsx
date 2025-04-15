@@ -2,8 +2,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 
-const ItemDetails = ({ route }) => {
+const ItemDetails = ({ navigation, route }) => {
   const item = route.params?.item;
+  console.log(item)
   return (
     <View style={styles.container}>
       
@@ -15,18 +16,25 @@ const ItemDetails = ({ route }) => {
         <Text style={styles.headerTitle}>Item Details</Text>
       </View>
 
-      <View style={styles.subConatiner}>
+      <View style={styles.detailsContainer}>
         <Image source={{ uri: item.image }} style={styles.itemImage} />
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>₹ {item.price}</Text>
-        <Text style={styles.subHeaders}>Select Size</Text>
+        <Text style={styles.itemName}>{item.item_name}</Text>
+        <Text style={styles.itemType}>{item.item_type}</Text>
+        <Text style={styles.itemDesc}>{item.description}</Text>
+        <Text style={styles.itemStock}>Remaining : {item.stock}</Text>
+        <Text style={styles.itemPrice}>Price : ₹ {item.price}</Text>
+        {/* <Text style={styles.subHeaders}>Select Size</Text>
         <View style={styles.sizesList}>
           <Text style={styles.size}>S</Text>
           <Text style={styles.size}>M</Text>
           <Text style={styles.size}>L</Text>
           <Text style={styles.size}>XL</Text>
-        </View>
+        </View> */}
+        <TouchableOpacity style={styles.buyButton}>
+          <Text style={styles.buyButtonText}>Buy Now</Text>
+        </TouchableOpacity>
       </View>
+
     </View>
   )
 }
@@ -37,9 +45,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 25,
-    justifyContent: "flex-start",
-    alignItems: "center"
+    paddingTop: "9%",
   },
   header: {
     flexDirection: "row",
@@ -54,11 +60,13 @@ const styles = StyleSheet.create({
     left: "43%",
     transform: [{ translateX: -50 }]
   },
-  subConatiner: {
-    alignItems: "flex-start"
+  detailsContainer: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    paddingHorizontal: 30
   },
   itemImage: {
-    height: 250,
+    height: 300,
     width: 250,
     marginTop: 15,
     borderRadius: 20,
@@ -69,12 +77,41 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 32,
     fontWeight: "bold",
-    marginVertical: 18
+    marginTop: 20
+  },
+  itemType: {
+    fontSize: 20,
+    color: "#858585",
+    marginTop: 7
+  },
+  itemDesc: {
+    fontSize: 17,
+    marginVertical: 10
+  },
+  itemStock: {
+    fontSize: 20
   },
   itemPrice: {
-    fontSize: 22,
-    fontWeight: 400
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 8
   },
+  buyButton: {
+    backgroundColor: "#0057FF",
+    marginTop: 60,
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+    borderWidth: 2,
+    borderColor: "#0057FF",
+    borderRadius: 25,
+    alignSelf: "center"
+  },
+  buyButtonText: {
+    fontSize: 20,
+    fontWeight: 600,
+    color: "white"
+  },
+
   subHeaders: {
     marginTop: 20,
     fontSize: 22,

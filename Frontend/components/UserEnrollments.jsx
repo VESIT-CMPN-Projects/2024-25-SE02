@@ -14,15 +14,15 @@ import RideCard from "./RideCard";
 import Constants from "expo-constants";
 import { AuthContext } from "./AuthContext";
 
-const UpcomingRides = ({ navigation }) => {
+const UserEnrollments = ({ navigation }) => {
   
   const { user } = useContext(AuthContext)
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [enrolledRides, setEnrolledRides] = useState([]);
 
   useEffect(() => {
-    const fetchRides = () => {
+    const fetchEnrolledRides = async () => {
+      const baseUrl = `http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000`
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
       const requestOptions = {
@@ -30,62 +30,40 @@ const UpcomingRides = ({ navigation }) => {
           headers: myHeaders,
           redirect: "follow"
       };
-      fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/rides`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if(!result.success) {
-          console.log("Error : " + result.message);
+
+      try {
+        const ridesResponse = await fetch(`${baseUrl}/rides`, requestOptions)
+        const ridesResult = await ridesResponse.json()
+        if(!ridesResult.success) {
+          console.log("Error : " + ridesResult.message);
           return;
         }
-        setRides(result.data);
-      })
-      .catch(error => {
-        console.error("Error: ", error);
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+        
+        const allRides = ridesResult.data
+  
+        const registrationResponse = await fetch(`${baseUrl}/registrations`, requestOptions)
+        const registrationResult = await registrationResponse.json()
+        if(!registrationResult.success) {
+          console.log("Error : ", registrationResult.error);
+          return;
+        }
+        console.log(registrationResult.data)
+        const enrolledRides = registrationResult.data
+          .filter(reg => reg.user_id._id === user._id)
+          .map(reg => reg.ride_id._id)
+        setRides(allRides.filter(ride => enrolledRides.includes(ride._id)))
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    const fetchEnrolledRides = () => {
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      const requestOptions = {
-        method: "GET",
-        headers: myHeaders,
-        redirect: "follow"
-      };
-      fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/registrations`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if(!result.success) {
-          console.log("Error : ", result.error);
-          return;
-        }
-        const userRides = result.data.filter(reg => reg.user_id._id === user._id).map(reg => reg.ride_id._id)
-        setEnrolledRides(userRides)
-      }).catch(error => {
-        console.error("Error: ", error);
-      });
-    }
-    
-    fetchRides();
-    if(user) {
-      fetchEnrolledRides();
-    }
+    fetchEnrolledRides();
   }, [])
 
-  const onEnrollButtonPress = (ride) => {
-    if(user) {
-      navigation.navigate("RideEnrollment", { ride })
-    } else {
-      Alert.alert("Login Required", "Please Login to Enroll for a Ride")
-      navigation.navigate("Login")
-    }
-  }
-
   const onViewDetailsButtonPress = (ride) => {
-    navigation.navigate("RideDetails", { ride })
+    navigation.navigate("RideDetails", { ride: ride, isEnrolledRide: true })
   }
 
   return (
@@ -95,7 +73,7 @@ const UpcomingRides = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialIcons name="arrow-back-ios" size={22} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Upcoming Rides</Text>
+        <Text style={styles.headerTitle}>My Enrollments</Text>
         <TouchableOpacity>
           <MaterialIcons name="map" size={24} color="#000" />
         </TouchableOpacity>
@@ -117,8 +95,7 @@ const UpcomingRides = ({ navigation }) => {
               <RideCard 
                 ride={ride.item}
                 viewDetails={onViewDetailsButtonPress}
-                enroll={onEnrollButtonPress} 
-                isEnrolled={enrolledRides.includes(ride.item._id)}
+                isEnrolledRide={true}
               />
             }
             keyExtractor={(ride) => ride._id}
@@ -179,4 +156,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UpcomingRides;
+export default UserEnrollments;

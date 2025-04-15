@@ -10,14 +10,17 @@ import {
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { Avatar } from "react-native-paper";
 
-const EmergencyScreen = () => {
+const EmergencyScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 70 }}>
       {/* Header */}
       <View style={styles.header}>
-        <Ionicons name="arrow-back" size={24} color="black"/>
+        <TouchableOpacity onPress={() => {navigation.goBack()}}>
+          <Ionicons name="arrow-back" size={24} color="black"/>
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Emergency</Text>
-        <View style={{ width: 24 }} /> {/* Spacer */}
+        {/* Spacer */}
+        <View style={{ width: 24 }} />
       </View>
 
       {/* SOS Button */}
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 40,
+    paddingTop: 50,
   },
   header: {
     flexDirection: "row",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,57 +7,49 @@ import {
   StyleSheet,
   ScrollView,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import EventCard from "./EventCard";
+import Constants from "expo-constants";
 
 const HomePage = ({ navigation }) => {
-  const rides = [
-    {
-      id: 1,
-      day: "SAT",
-      date: "Mar 15, 2025",
-      time: "8:00 AM",
-      title: "Weekend City Explorer",
-      location: "Central Park",
-      distance: "15 km",
-      duration: "1.5 hrs",
-      status: "Available",
-    },
-    {
-      id: 2,
-      day: "SUN",
-      date: "Mar 16,2025",
-      time: "7:00 AM",
-      title: "Weekend Mountain Trail",
-      location: "Pune Hills",
-      distance: "35 km",
-      duration: "3 hrs",
-      status: "Almost Full",
-    },
-    {
-      id: 3,
-      day: "THU",
-      date: "Mar 20, 2025",
-      time: "7:30 AM",
-      title: "Charity Ride for Education",
-      location: "Hudson River Park",
-      distance: "25 km",
-      duration: "2 hrs",
-      status: "Available",
-    },
-    {
-      id: 4,
-      day: "SAT",
-      date: "Mar 22, 2025",
-      time: "7:00 AM",
-      title: "Sunset Beach Ride",
-      location: "Rockaway Beach",
-      distance: "20 km",
-      duration: "2 hrs",
-      status: "Closed",
-    },
-  ];
+
+  const [rides, setRides] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow"
+  };
+  useEffect(() => {
+    try {
+      const getRides = async () => {
+        fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/rides`, requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          if(!result.success) {
+            console.log("Error : " + result.message);
+            return;
+          }
+          setRides(result.data);
+        })
+        .catch(error => {
+            console.error("Error: ", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      }
+      getRides();
+    } catch(error) {
+        Alert.alert("Error", "Something went wrong. Please try again later.");
+        console.error("Error: ", error);
+    }
+  }, [])
 
   const viewDetails = (ride) => {
     navigation.navigate("RideDetails", {ride});
@@ -104,20 +96,12 @@ const HomePage = ({ navigation }) => {
             <FontAwesome5 name="bicycle" size={24} color="#007bff" />
             <Text style={styles.actionText}>Upcoming Rides</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <MaterialIcons
-              name="volunteer-activism"
-              size={24}
-              color="#28a745"
-            />
+          <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate("Donations")}>
+            <MaterialIcons name="volunteer-activism" size={24} color="#28a745" />
             <Text style={styles.actionText}>Donations</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate("EmergencyCall")}>
-            <MaterialIcons
-              name="call"
-              size={24}
-              color="red"
-            />
+            <MaterialIcons name="call" size={24} color="red" />
             <Text style={styles.actionText}>Emergency Call</Text>
           </TouchableOpacity>
         </View>
@@ -125,7 +109,7 @@ const HomePage = ({ navigation }) => {
         {/* Upcoming Events */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Upcoming Events</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("EmergencyCall")}>
+          <TouchableOpacity>
             <Text style={styles.viewAll}>View All</Text>
           </TouchableOpacity>
         </View>
@@ -135,15 +119,17 @@ const HomePage = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           style={styles.eventsScroll}
         >
-          <EventCard
-            ride={rides[0]}
-            viewDetails={viewDetails}
-          />
-
-          <EventCard
-            ride={rides[1]}
-            viewDetails={viewDetails}
-          />
+          {loading ? (
+              <ActivityIndicator size="large" color="0000ff" style={styles.loadingIndicator} />
+            ) : rides.map((ride) => {
+            return(
+              <EventCard
+                ride={ride}
+                key={ride._id}
+                viewDetails={viewDetails}
+              />
+            )
+          })}
         </ScrollView>
 
         {/* Community Highlights */}
@@ -180,7 +166,7 @@ const HomePage = ({ navigation }) => {
           <MaterialIcons name="notifications" size={28} color="#666" />
           <Text style={styles.navText}>Alerts</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => {navigation.navigate("UserProfile")}}>
           <MaterialIcons name="person" size={28} color="#666" />
           <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>
@@ -193,7 +179,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 25
+    paddingTop: "9%"
   },
   navItem: {
       alignItems: "center",
@@ -202,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginTop: 2,
-  },      
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -278,6 +264,12 @@ const styles = StyleSheet.create({
 
   eventsScroll: {
     paddingHorizontal: 15
+  },
+
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: "center",
+    alignSelf: "center"
   },
 
   highlightsContainer: {

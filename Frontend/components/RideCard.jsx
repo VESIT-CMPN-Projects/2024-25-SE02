@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 
-const RideCard = ({ ride, viewDetails, enroll }) => {
+const RideCard = ({ ride, viewDetails, enroll, isEnrolled=false, isEnrolledRide=false }) => {
   const datetime = new Date(ride.date_time);
 
   const date = datetime.getDate().toString().padStart(2,'0')
@@ -38,12 +38,19 @@ const RideCard = ({ ride, viewDetails, enroll }) => {
         <Image source={require("../assets/distance.png")} style={styles.icon}></Image>
         <Text style={styles.details}>{ride.distance} km</Text>
       </View>
+      {isEnrolled && (
+        <View style={styles.enrolledTagContainer}>
+          <Text style={styles.enrolledTagText}>Enrolled</Text>
+        </View>
+      )}
       <TouchableOpacity style={styles.viewDetailsButton} onPress={() => {viewDetails(ride)}}>
         <Text style={styles.viewDetailsText}>View Details</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.enrollButton} onPress={() => {enroll(ride)}}>
-        <Text style={styles.enrollText}>Enroll Now</Text>
-      </TouchableOpacity>
+      { !isEnrolledRide && 
+        <TouchableOpacity style={styles.enrollButton} onPress={() => {enroll(ride)}}>
+          <Text style={styles.enrollText}>Enroll Now</Text>
+        </TouchableOpacity>
+      }
     </View>
   )
 }
@@ -116,4 +123,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18
   },
+
+  enrolledTagContainer: {
+    backgroundColor: "rgba(184, 255, 185, 0.4)",
+    alignItems: "center",
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: "rgba(169, 255, 171, 0.5)"
+  },
+  enrolledTagText: {
+    color: "#199F1B",
+    fontSize: 16,
+    fontWeight: 500,
+    paddingVertical: 4
+  }
 })

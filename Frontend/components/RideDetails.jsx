@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { AuthContext } from "./AuthContext";
 
 const RideDetails = ({ navigation, route }) => {
+  const { user } = useContext(AuthContext)
   const ride = route.params?.ride;
+  const isEnrolledRide = route.params?.isEnrolledRide
 
   if (!ride) {
     return (
@@ -96,9 +100,18 @@ const RideDetails = ({ navigation, route }) => {
           </View>
           <Text style={styles.totalRidersText}>Total: 50 riders</Text>
         </View>
-        <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate("RideEnrollment", { ride })}>
-          <Text style={styles.registerText}>Enroll Now</Text>
-        </TouchableOpacity>
+        {!isEnrolledRide &&
+          <TouchableOpacity style={styles.registerButton} onPress={() => {
+            if(user) {
+              navigation.navigate("RideEnrollment", { ride })
+            } else {
+              Alert.alert("Login Required", "Please Login to Enroll for a Ride")
+              navigation.navigate("Login")
+            }
+          }}>
+            <Text style={styles.registerText}>Enroll Now</Text>
+          </TouchableOpacity>
+        }
 
         {/* Ride Leaders */}
         <Text style={styles.rideLeadersTitle}>Ride Leaders</Text>
@@ -151,8 +164,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 30,
-    paddingBottom: 50
+    paddingTop: "10%"
   },
 
   header: {

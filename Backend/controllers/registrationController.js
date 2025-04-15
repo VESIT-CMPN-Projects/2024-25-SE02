@@ -5,9 +5,15 @@ const getAllRegistrations = async (req, res) => {
     const registrations = await Registration.find()
       .populate("user_id", "name email")
       .populate("ride_id", "ride_name date_time");
-    res.status(200).json(registrations);
+    res.status(200).json({
+      success: true,
+      data: registrations
+    });
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch registrations" });
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch registrations"
+    });
   }
 };
 
@@ -28,9 +34,15 @@ const addRegistration = async (req, res) => {
   try {
     const newRegistration = new Registration(req.body);
     await newRegistration.save();
-    res.status(201).json(newRegistration);
+    res.status(201).json({
+      success: true,
+      data: newRegistration
+    });
   } catch (error) {
-    res.status(500).json({ error: "Error adding registration" });
+    res.status(500).json({
+      succes: false,
+      error: "Error adding registration"
+    });
   }
 };
 
