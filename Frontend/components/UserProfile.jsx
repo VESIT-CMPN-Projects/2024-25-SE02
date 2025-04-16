@@ -49,6 +49,9 @@ const UserProfile = ({ navigation }) => {
       <TouchableOpacity style={styles.myEnrollmentsBtn} onPress={() => navigation.navigate("UserEnrollments")}>
         <Text style={styles.myEnrollmentsBtnText}>My Enrollments</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.logOutBtn} onPress={() => navigation.navigate("Login")}>
+        <Text style={styles.myEnrollmentsBtnText}>Log out</Text>
+      </TouchableOpacity>
 
 
       {/* Bottom Navigation */}
@@ -145,6 +148,17 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderRadius: 15,
     borderColor: "#0057FF",
+    borderWidth: 2,
+    alignItems: "center"
+  },
+  logOutBtn:{
+    backgroundColor: "red",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    marginHorizontal: 120,
+    marginTop: 20,
+    borderRadius: 15,
+    borderColor: "red",
     borderWidth: 2,
     alignItems: "center"
   },

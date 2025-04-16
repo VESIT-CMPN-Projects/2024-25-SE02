@@ -1,14 +1,25 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const Sidebar = ({ onChangeTab, activeTab }) => {
+  const navigation = useNavigation();
+
   const links = [
     { label: "Dashboard", icon: "dashboard", value: "dashboard" },
     { label: "Cycle Events", icon: "event", value: "events" },
     { label: "Merchandise", icon: "storefront", value: "merchandise" },
     { label: "Logout", icon: "logout", value: "logout" }
   ];
+
+  const handleTabChange = (value) => {
+    if (value === "logout") {
+      navigation.navigate("Login"); 
+    } else {
+      onChangeTab(value);
+    }
+  };
 
   return (
     <View style={styles.sidebar}>
@@ -20,7 +31,7 @@ const Sidebar = ({ onChangeTab, activeTab }) => {
             styles.link,
             activeTab === link.value && styles.activeLink
           ]}
-          onPress={() => onChangeTab(link.value)}
+          onPress={() => handleTabChange(link.value)}
         >
           <MaterialIcons
             name={link.icon}
