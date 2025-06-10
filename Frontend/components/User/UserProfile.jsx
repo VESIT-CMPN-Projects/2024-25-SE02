@@ -1,21 +1,18 @@
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useContext } from 'react'
-import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-import { AuthContext } from './AuthContext';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useContext } from 'react'
+import { MaterialIcons } from "@expo/vector-icons";
+import { AuthContext } from '../AuthContext';
 
 const UserProfile = ({ navigation }) => {
   
-  const { user } = useContext(AuthContext)
-  if(!user) {
-    Alert.alert("Login Required", "Please Login to view your Profile")
-    navigation.navigate("Login")
-  }
-  const dateJoined = new Date(user.date_joined)
+  const { user, logout } = useContext(AuthContext);
+
+  const dateJoined = user && new Date(user.date_joined)
   .toLocaleDateString('en-GB', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
-  })
+  });
 
   return (
     <View style={styles.container}>
@@ -24,35 +21,52 @@ const UserProfile = ({ navigation }) => {
         <Text style={styles.headerTitle}>Profile</Text>
       </View>
 
-      <Image source={require("../assets/user1.png")} style={styles.profilePhoto} />
+      { user ? <>
+        {/* If User Logged In */}
+        <Image source={require("../../assets/user1.png")} style={styles.profilePhoto} />
 
-      <View style={styles.userDataContainer}>
-        <Text style={styles.title}>User Details</Text>
-        <View style={styles.userDetailsContainer}>
-          <Text style={styles.userDetailsTitle}>Name : </Text>
-          <Text style={styles.userDetails}>{user.name}</Text>
+        <View style={styles.userDataContainer}>
+          <Text style={styles.title}>User Details</Text>
+          <View style={styles.userDetailsContainer}>
+            <Text style={styles.userDetailsTitle}>Name : </Text>
+            <Text style={styles.userDetails}>{user.name}</Text>
+          </View>
+          <View style={styles.userDetailsContainer}>
+            <Text style={styles.userDetailsTitle}>Email : </Text>
+            <Text style={styles.userDetails}>{user.email}</Text>
+          </View>
+          <View style={styles.userDetailsContainer}>
+            <Text style={styles.userDetailsTitle}>Phone Number : </Text>
+            <Text style={styles.userDetails}>{user.phone}</Text>
+          </View>
+          <View style={styles.userDetailsContainer}>
+            <Text style={styles.userDetailsTitle}>Date Joined : </Text>
+            <Text style={styles.userDetails}>{dateJoined}</Text>
+          </View>
         </View>
-        <View style={styles.userDetailsContainer}>
-          <Text style={styles.userDetailsTitle}>Email : </Text>
-          <Text style={styles.userDetails}>{user.email}</Text>
-        </View>
-        <View style={styles.userDetailsContainer}>
-          <Text style={styles.userDetailsTitle}>Phone Number : </Text>
-          <Text style={styles.userDetails}>{user.phone}</Text>
-        </View>
-        <View style={styles.userDetailsContainer}>
-          <Text style={styles.userDetailsTitle}>Date Joined : </Text>
-          <Text style={styles.userDetails}>{dateJoined}</Text>
-        </View>
-      </View>
 
-      <TouchableOpacity style={styles.myEnrollmentsBtn} onPress={() => navigation.navigate("UserEnrollments")}>
-        <Text style={styles.myEnrollmentsBtnText}>My Enrollments</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.logOutBtn} onPress={() => navigation.navigate("Login")}>
-        <Text style={styles.myEnrollmentsBtnText}>Log out</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.myEnrollmentsBtn} onPress={() => navigation.navigate("UserEnrollments")}>
+          <Text style={styles.myEnrollmentsBtnText}>My Enrollments</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.logOutBtn} onPress={() => {
+          logout();
+          navigation.navigate("Login");
+        }}>
+          <Text style={styles.myEnrollmentsBtnText}>Log out</Text>
+        </TouchableOpacity>
 
+      </> : <>
+
+        {/* If User Not Logged In */}
+        <View style={styles.loginRequestContainer}>
+          <Text style={styles.loginRequestText}>Please Login to View your Profile</Text>
+          <TouchableOpacity style={styles.loginRequestBtn} onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.loginRequestBtnText}>Login</Text>
+          </TouchableOpacity>
+        </View>
+      
+      </>
+      }
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
@@ -147,7 +161,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
     marginTop: 30,
     borderRadius: 15,
-    borderColor: "#0057FF",
     borderWidth: 2,
     alignItems: "center"
   },
@@ -157,8 +170,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginHorizontal: 120,
     marginTop: 20,
-    borderRadius: 15,
-    borderColor: "red",
+    borderRadius: 18,
     borderWidth: 2,
     alignItems: "center"
   },
@@ -186,5 +198,32 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginTop: 2,
+  },
+
+  loginRequestContainer: {
+    display: "flex",
+    flex: 2,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    transform: [{translateY: "-8%"}]
+  },
+  loginRequestText: {
+    fontSize: 20,
+    fontWeight: 500,
+
+  },
+  loginRequestBtn: {
+    paddingVertical: 16,
+    paddingHorizontal: 35,
+    marginTop: 35,
+    borderWidth: 2,
+    borderRadius: 25,
+    backgroundColor: "#0057FF"
+  },
+  loginRequestBtnText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: 500
   }
 })

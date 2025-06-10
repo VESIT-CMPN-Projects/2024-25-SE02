@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,11 +9,43 @@ import {
   Alert
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import Constants from "expo-constants";
+import { AuthContext } from "../AuthContext";
+import useFetch from "../Custom Hooks/useFetch";
 
 const AdminLoginPage = ({ navigation }) => {
+  const { user, login, authLoading } = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  };
+  const { data, error, refetch } = useFetch("/user/login", requestOptions, null, false);
+
+  useEffect(() => {
+    if(!user || authLoading) {
+      return;
+    }
+    if(user?.type == "user") {
+      navigation.replace("Home");
+    } else if(user?.type == "admin") {
+      navigation.replace("AdminPortal");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if(error) {
+      Alert.alert("Login Failed", error.toString() || "Invalid credentials");
+    }
+    if(data) {
+      Alert.alert("Success", "Admin Login Successful");
+      setEmail("");
+      setPassword("");
+      login({...data, type: "admin"});
+    }
+  }, [data, error]);
 
   const submitHandler = async () => {
     if (!email || !password) {
@@ -25,29 +57,9 @@ const AdminLoginPage = ({ navigation }) => {
       Alert.alert("Invalid Email", "Please use your ACPF RideHub admin email.");
       return;
     }
-  
-    try {
-      const response = await fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/user/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      const result = await response.json();
-  
-      if (!response.ok) {
-        Alert.alert("Login Failed", result.message || "Invalid credentials");
-        return;
-      }
-  
-      Alert.alert("Success", "Admin Login Successful");
-      navigation.navigate("AdminPortal");
-    } catch (error) {
-      Alert.alert("Error", "Something went wrong. Please try again later.");
-      console.error("Error: ", error);
-    }
-  };
-  
+
+    refetch({ body: JSON.stringify({ email, password }) });
+  };  
 
   return (
     <View style={styles.container}>

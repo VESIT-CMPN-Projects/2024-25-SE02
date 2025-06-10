@@ -1,23 +1,23 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginPage from "./components/LoginPage";
-import SignUpPage from "./components/SignUpPage";
-import HomePage from "./components/HomePage";
-import UpcomingRides from "./components/UpcomingRides";
-import RideDetails from "./components/RideDetails";
-import RideEnrollment from "./components/RideEnrollment";
-import SuccessfulRegistration from "./components/SuccessfulRegistration";
-import Shop from "./components/Shop";
-import ItemDetails from "./components/ItemDetails";
-import EmergencyCall from "./components/EmergencyCall";
-import PaymentConfirmation from "./components/PaymentConfirmation";
+import LoginPage from "./components/User/LoginPage";
+import SignUpPage from "./components/User/SignUpPage";
+import HomePage from "./components/User/HomePage";
+import UpcomingRides from "./components/User/UpcomingRides";
+import RideDetails from "./components/User/RideDetails";
+import RideEnrollment from "./components/User/RideEnrollment";
+import SuccessfulRegistration from "./components/User/SuccessfulRegistration";
+import Shop from "./components/User/Shop";
+import ItemDetails from "./components/User/ItemDetails";
+import EmergencyCall from "./components/User/EmergencyCall";
+import PaymentConfirmation from "./components/User/PaymentConfirmation";
+import UserProfile from "./components/User/UserProfile";
+import UserEnrollments from "./components/User/UserEnrollments";
+import Donations from "./components/User/Donations";
 import AdminLoginPage from "./components/Admin/AdminLoginPage";
 import AdminPortal from "./components/Admin/AdminPortal";
-import UserProfile from "./components/UserProfile";
-import Donations from "./components/Donations";
 import { AuthProvider } from "./components/AuthContext";
-import UserEnrollments from "./components/UserEnrollments";
 
 const Stack = createStackNavigator();
 

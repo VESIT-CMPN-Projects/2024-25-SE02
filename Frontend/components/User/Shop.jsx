@@ -1,27 +1,11 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
-import React, { useEffect, useState } from 'react';
 import { MaterialIcons } from "@expo/vector-icons";
 import ShopItem from './ShopItem';
-import Constants from "expo-constants";
+import useFetch from '../Custom Hooks/useFetch';
 
 const Shop = ({ navigation }) => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMerchandise = async () => {
-      try {
-        const response = await fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/merchandise`);
-        const data = await response.json();
-        setItems(data);
-      } catch (error) {
-        console.error("Error fetching merchandise : ", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMerchandise();
-  }, []);
+  const { data: items, loading, error, refetch } = useFetch("/merchandise");
 
   const onViewDetailsButtonPressed = (item) => {
     navigation.navigate("ItemDetails", { item });
@@ -36,6 +20,13 @@ const Shop = ({ navigation }) => {
 
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" style={styles.loadingIndicator} />
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error : {error?.message}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={refetch}>
+            <Text style={styles.retryText}>Try Again</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         <FlatList
           data={items}
@@ -101,6 +92,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     transform: [{ scaleX: 3 }, { scaleY: 3 }]
+  },
+  errorContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginHorizontal: 15,
+    marginTop: 20,
+    alignItems: "center"
+  },
+  errorText: {
+    color: "red",
+    fontSize: 18,
+    fontWeight: 500
+  },
+  retryButton: {
+    marginTop: 15,
+    paddingVertical: 7,
+    paddingHorizontal: 9,
+    borderWidth: 1,
+    borderRadius: 16,
+    width: "40%",
+    backgroundColor: "#d91111"
+  },
+  retryText: {
+    color: "white",
+    fontWeight: 600,
+    fontSize: 14,
+    alignSelf: "center"
   },
 
   itemsList: {

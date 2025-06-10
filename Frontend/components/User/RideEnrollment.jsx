@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,9 @@ import {
 } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../AuthContext";
 import Constants from "expo-constants";
+import useFetch from "../Custom Hooks/useFetch";
 
 const RideEnrollment = ({ navigation, route }) => {
   const { user } = useContext(AuthContext)
@@ -43,36 +44,34 @@ const RideEnrollment = ({ navigation, route }) => {
   });
 
   const time = (datetime.getHours() > 12 ? datetime.getHours() - 12 : datetime.getHours()).toString().padStart(2, '0')
-   + ":" + datetime.getMinutes().toString().padStart(2, '0')
-   + " " + (datetime.getHours() >= 12 ? "PM" : "AM");
+  + ":" + datetime.getMinutes().toString().padStart(2, '0')
+  + " " + (datetime.getHours() >= 12 ? "PM" : "AM");
+
+  const { data, loading, error, message, refetch: registerForRide } = useFetch("/registrations", { method: "POST" }, null, false);
 
   const enroll = () => {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+
     const raw = JSON.stringify({
       user_id: user._id,
       ride_id: ride._id,
       status: "Confirmed"
     });
-    const requestOptions = {
-      body: raw,
-      method: "POST",
-      headers: myHeaders,
-      redirect: "follow"
-    };
-    fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/registrations`, requestOptions)
-    .then(response => response.json())
-    .then(result => {
-      if(!result.success) {
-        console.log("Error : ", result.error);
-        Alert.alert("Error Occured", "Error occured while registering.\nPlease try again later.")
-        return;
-      }
-      navigation.navigate("SuccessfulRegistration", { ride })
-    }).catch(error => {
-      console.error("Error: ", error);
+
+    registerForRide({
+      body: raw
     });
   }
+
+  useEffect(() => {
+    if(error) {
+      console.log("Error : ", result.error);
+      Alert.alert("Error Occured", "Error occured while registering.\nPlease try again later.")
+      return;
+    }
+    if(data) {
+      navigation.navigate("SuccessfulRegistration", { ride });
+    }
+  }, [data]);
 
   return (
     <ScrollView
@@ -228,7 +227,7 @@ const RideEnrollment = ({ navigation, route }) => {
       </View>
 
       {/* Register Button */}
-      <TouchableOpacity style={styles.registerButton} onPress={()=> {enroll()}}>
+      <TouchableOpacity style={styles.registerButton} onPress={()=> {enroll()}} disabled={loading} >
         <Text style={styles.registerText}>Register Now</Text>
       </TouchableOpacity>
     </ScrollView>

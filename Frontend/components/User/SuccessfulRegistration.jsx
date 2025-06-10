@@ -28,7 +28,7 @@ const SuccessfulRegistration = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.dataContainer}>
-        <Image source={require("../assets/checkmark.png")} style={styles.checkmark}></Image>
+        <Image source={require("../../assets/checkmark.png")} style={styles.checkmark}></Image>
         <Text style={styles.title}>Registration Successful</Text>
         <Text style={styles.subtitle}>You're officially enrolled for the ride</Text>
 
@@ -52,7 +52,7 @@ const SuccessfulRegistration = ({ navigation, route }) => {
             <Text style={styles.details}>End : {ride.end_location}</Text>
           </View>
           <View style={styles.detailsContainer}>
-            <Image source={require("../assets/distance.png")} style={styles.icon}></Image>
+            <Image source={require("../../assets/distance.png")} style={styles.icon}></Image>
             <Text style={styles.details}>{ride.distance} km</Text>
           </View>
         </View>

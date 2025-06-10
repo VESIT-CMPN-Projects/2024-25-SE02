@@ -1,38 +1,81 @@
-import { Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Alert, Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import { MaterialIcons } from "@expo/vector-icons";
 import { TextInput } from 'react-native-gesture-handler';
+import { AuthContext } from '../AuthContext';
+import useFetch from '../Custom Hooks/useFetch';
 
 const Donations = ({ navigation }) => {
-  const [amount, setAmount] = useState(0)
-  const [method, setMethod] = useState("")
+
+  const { user } = useContext(AuthContext);
+  const { error, message, refetch: donateAmount } = useFetch("/donations", { method: "POST" }, null, false);
+
+  useEffect(() => {
+    if(error) {
+      Alert.alert("Error Occured", error.message);
+    }
+    if(message) {
+      Alert.alert("Successful Donation", message);
+    }
+  }, [message]);
+
+  const [amount, setAmount] = useState(0);
+  const [method, setMethod] = useState(null);
+  const [selectedAmountId, setSelectedAmountId] = useState(-1);
+  const [selectedMethodId, setSelectedMethodId] = useState(-1);
   const amountsList = [
     [0, 100], [1, 250], [2, 500], [3, 1000], [4, 5000], [5, "Custom"]
-  ]
-  const methodsList = ["Credit Card", "UPI", "Net Banking", "Cash"]
-  const [selectedAmountId, setSelectedAmountId] = useState(-1)
-  const [selectedMethodId, setSelectedMethodId] = useState(-1)
+  ];
+  const methodsList = ["Credit Card", "UPI", "Net Banking", "Cash"];
 
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
+  // const [name, setName] = useState("");
+  // const [email, setEmail] = useState("");
 
   const onAmountSelect = (val) => {
-    setSelectedAmountId(val[0])
+    if(selectedAmountId === val[0]) {
+      setSelectedAmountId(-1);
+      setAmount(0);
+      return;
+    }
+    setSelectedAmountId(val[0]);
     if(val[1] !== "Custom") {
-      setAmount(val[1])
+      setAmount(val[1]);
     } else {
-      setAmount(0)
+      setAmount(0);
     }
   }
 
-  const onMethodSelect = (index, meth) => {
-    setSelectedMethodId(index)
-    setMethod(meth)
+  const onMethodSelect = (index, method) => {
+    if(selectedMethodId === index) {
+      setSelectedMethodId(-1);
+      setMethod(null);
+      return;
+    }
+    setSelectedMethodId(index);
+    setMethod(method);
   }
 
-  useEffect(() => {
-    console.log(amount)
-  }, [amount])
+  const donate = () => {
+    if(!amount) {
+      Alert.alert("Invalid Data" ,"Please provide an amount to donate");
+      return;
+    }
+    if(!method) {
+      Alert.alert("Invalid Data", "Please select a method for payment");
+      return;
+    }
+    donateAmount({
+      body: JSON.stringify({
+        user_id: user._id,
+        amount: amount,
+        payment_method: method
+      })
+    });
+    setSelectedAmountId(-1);
+    setAmount(0);
+    setSelectedMethodId(-1);
+    setMethod(null);
+  }
 
   return (
     <View style={styles.container}>
@@ -51,7 +94,7 @@ const Donations = ({ navigation }) => {
         {/* Hero Section */}
         <View style={styles.heroContainer}>
           <ImageBackground
-            source={require("../assets/head.png")}
+            source={require("../../assets/head.png")}
             style={styles.heroImage}
           />
         </View>
@@ -61,7 +104,7 @@ const Donations = ({ navigation }) => {
           <Text style={styles.text1}>
             Your support helps us organize awareness rides, provide safety gear, and fund social causes.
           </Text>
-          <Image source={require("../assets/quotes.png")} style={styles.img1} />
+          <Image source={require("../../assets/quotes.png")} style={styles.img1} />
           <Text style={styles.text2}>
             "Last year, we covered 5000 km for environmental awareness thanks to our donors!"
           </Text>
@@ -72,11 +115,13 @@ const Donations = ({ navigation }) => {
               {amountsList.map((val) => {
                 const isSelected = selectedAmountId >= 0 && val[0] == selectedAmountId;
                 return(
-                  <View style={[styles.amountBox, isSelected && styles.selectedItemAmountBox]} key={val[0]}>
-                    <TouchableOpacity onPress={() => onAmountSelect(val)}>              
-                      <Text style={styles.amount}>{val[0] !== 5 && "₹ "}{val[1]}</Text>
-                    </TouchableOpacity>
-                  </View>
+                  <TouchableOpacity
+                    style={[styles.amountBox, isSelected && styles.selectedItemAmountBox]}
+                    key={val[0]}
+                    onPress={() => onAmountSelect(val)}
+                  >              
+                    <Text style={styles.amount}>{val[0] !== 5 && "₹ "}{val[1]}</Text>
+                  </TouchableOpacity>
                 )
               })}
             </View> 
@@ -102,21 +147,23 @@ const Donations = ({ navigation }) => {
           <Text style={styles.detailsTitle}>Choose Method</Text>
           <View style={styles.methodChoiceSetContainer}> 
             <View style={styles.methodChoiceSetColumn}>            
-              {methodsList.map((meth, index, array) => {
+              {methodsList.map((meth, index) => {
                 const isSelected = selectedMethodId >= 0 && index == selectedMethodId;
                 return(
-                  <View style={[styles.methodBox, isSelected && styles.selectedItemMethodBox]} key={index}>
-                    <TouchableOpacity onPress={() => onMethodSelect(index, meth)}>              
-                      <Text style={styles.method}>{meth}</Text>
-                    </TouchableOpacity>
-                  </View>
+                  <TouchableOpacity
+                    style={[styles.methodBox, isSelected && styles.selectedItemMethodBox]}
+                    key={index}
+                    onPress={() => onMethodSelect(index, meth)}
+                  >              
+                    <Text style={styles.method}>{meth}</Text>
+                  </TouchableOpacity>
                 )
               })}
             </View> 
           </View>
 
           {/* User Data */}
-          <Text style={styles.detailsTitle}>Donor Details</Text>
+          {/* <Text style={styles.detailsTitle}>Donor Details</Text>
           <View style={styles.inputContainer}>
             <MaterialIcons name="person" size={20} color="#666" style={styles.icon} />
             <TextInput
@@ -134,15 +181,14 @@ const Donations = ({ navigation }) => {
               value={email}
               onChangeText={setEmail}
             />
-          </View>
+          </View> */}
 
-          <TouchableOpacity style={styles.donateButton}>
+          <TouchableOpacity style={styles.donateButton} onPress={() => donate()}>
             <Text style={styles.donateText}>Donate Now</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
       
-
     </View>
   )
 }
@@ -349,7 +395,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginVertical: 20,
-    borderRadius: 15,
+    borderRadius: 25,
     borderColor: "#0057FF",
     borderWidth: 2,
     alignItems: "center"

@@ -11,45 +11,11 @@ import {
 } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import EventCard from "./EventCard";
-import Constants from "expo-constants";
+import useFetch from "../Custom Hooks/useFetch";
 
 const HomePage = ({ navigation }) => {
 
-  const [rides, setRides] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-  const requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow"
-  };
-  useEffect(() => {
-    try {
-      const getRides = async () => {
-        fetch(`http://${Constants.expoConfig?.hostUri?.split(":")[0]}:5000/rides`, requestOptions)
-        .then(response => response.json())
-        .then(result => {
-          if(!result.success) {
-            console.log("Error : " + result.message);
-            return;
-          }
-          setRides(result.data);
-        })
-        .catch(error => {
-            console.error("Error: ", error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-      }
-      getRides();
-    } catch(error) {
-        Alert.alert("Error", "Something went wrong. Please try again later.");
-        console.error("Error: ", error);
-    }
-  }, [])
+  const { data: rides, loading, error, refetch } = useFetch("/rides");
 
   const viewDetails = (ride) => {
     navigation.navigate("RideDetails", {ride});
@@ -65,7 +31,7 @@ const HomePage = ({ navigation }) => {
         <Text style={styles.headerTitle}>Aamhi Cycle Premi</Text>
         <TouchableOpacity>
           <Image
-            source={require("../assets/profile.png")}
+            source={require("../../assets/profile.png")}
             style={styles.profileIcon}
           />
         </TouchableOpacity>
@@ -75,7 +41,7 @@ const HomePage = ({ navigation }) => {
         {/* Hero Section */}
         <View style={styles.heroContainer}>
           <ImageBackground
-            source={require("../assets/head.png")}
+            source={require("../../assets/head.png")}
             style={styles.heroImage}
           />
 
@@ -121,15 +87,27 @@ const HomePage = ({ navigation }) => {
         >
           {loading ? (
               <ActivityIndicator size="large" color="0000ff" style={styles.loadingIndicator} />
-            ) : rides.map((ride) => {
-            return(
-              <EventCard
-                ride={ride}
-                key={ride._id}
-                viewDetails={viewDetails}
-              />
+            ) : error ? (
+              <View>
+                <Text style={styles.errorMessage}>
+                  Error : {error?.message}
+                </Text>
+                <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
+                  <Text style={styles.retryText}>Try Again</Text>
+                </TouchableOpacity>
+              </View>
+            ) : rides != null ? rides.map((ride) => {
+              return(
+                <EventCard
+                  ride={ride}
+                  key={ride._id}
+                  viewDetails={viewDetails}
+                />
+              )
+            }) : (
+              <View></View>
             )
-          })}
+          }
         </ScrollView>
 
         {/* Community Highlights */}
@@ -182,18 +160,18 @@ const styles = StyleSheet.create({
     paddingTop: "9%"
   },
   navItem: {
-      alignItems: "center",
+    alignItems: "center"
   },
   navText: {
     fontSize: 12,
     color: "#666",
-    marginTop: 2,
+    marginTop: 2
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
+    padding: 15
   },
   headerTitle: {
     fontSize: 18,
@@ -263,7 +241,7 @@ const styles = StyleSheet.create({
   },
 
   eventsScroll: {
-    paddingHorizontal: 15
+    marginHorizontal: 15
   },
 
   loadingIndicator: {
@@ -271,11 +249,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center"
   },
+  errorMessage: {
+    color: "red",
+    fontSize: 14
+  },
+  retryButton: {
+    marginTop: 8,
+    paddingVertical: 7,
+    paddingHorizontal: 9,
+    borderWidth: 1,
+    borderRadius: 16,
+    width: "60%",
+    backgroundColor: "#d91111"
+  },
+  retryText: {
+    color: "white",
+    fontWeight: 600,
+    fontSize: 14,
+    alignSelf: "center"
+  },
 
   highlightsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginVertical: 20,
+    marginVertical: 20
   },
   highlightCard: {
     alignItems: "center",
@@ -298,23 +295,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#ddd"
   },
 
   eventDetailsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 2,
+    marginVertical: 2
   },
   eventDetails: {
     marginLeft: 5,
-    color: "#666",
+    color: "#666"
   },
 
   overlay: {
     ...StyleSheet.absoluteFillObject, 
     backgroundColor: "#000", 
-    opacity: 0.5, 
+    opacity: 0.5
   },
 });
 

@@ -4,7 +4,6 @@ import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 
 const ItemDetails = ({ navigation, route }) => {
   const item = route.params?.item;
-  console.log(item)
   return (
     <View style={styles.container}>
       

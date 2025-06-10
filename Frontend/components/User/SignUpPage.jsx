@@ -61,7 +61,7 @@ const SignUpPage = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("../assets/logo.png")} style={styles.logo} />
+      <Image source={require("../../assets/logo.png")} style={styles.logo} />
       <Text style={styles.title}>Create Account</Text>
       <Text style={styles.subtitle}>Join our Cycling Community</Text>
 
@@ -157,6 +157,8 @@ const styles = StyleSheet.create({
     color: "#888",
     marginBottom: 20,
     marginTop: 5,
+    fontWeight: 500,
+    fontSize: 15
   },
   inputContainer: {
     flexDirection: "row",
@@ -165,23 +167,25 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     width: "90%",
-    marginVertical: 5,
+    marginVertical: 5
   },
   icon: {
     marginRight: 10,
-    marginLeft: 7,
+    marginLeft: 7
   },
   input: {
     flex: 1,
-    fontWeight: "500",
+    fontWeight: 500,
+    fontSize: 15
   },
   termsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 12
   },
   termsText: {
     marginLeft: 5,
+    fontSize: 15
   },
   termsLink: {
     color: "#007bff",

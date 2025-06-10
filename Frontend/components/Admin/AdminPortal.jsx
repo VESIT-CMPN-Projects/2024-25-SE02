@@ -144,7 +144,8 @@ const styles = StyleSheet.create({
   quickCard: {
     padding: 20,
     borderRadius: 10,
-    width: "45%"
+    width: "45%",
+    justifyContent: "center"
   },
   cardText: {
     color: "#fff",

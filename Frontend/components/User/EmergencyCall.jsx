@@ -86,7 +86,7 @@ const EmergencyScreen = ({ navigation }) => {
       <View style={styles.serviceCardContainer}>
         <View style={styles.serviceCard}>
           <Image
-            source={require("../assets/hospital.jpeg")}
+            source={require("../../assets/hospital.jpeg")}
             style={styles.serviceImage}
           />
           <View style={styles.serviceFooter}>
@@ -100,7 +100,7 @@ const EmergencyScreen = ({ navigation }) => {
 
         <View style={styles.serviceCard}>
           <Image
-            source={require("../assets/police.jpeg")}
+            source={require("../../assets/police.jpeg")}
             style={styles.serviceImage}
           />
           <View style={styles.serviceFooter}>

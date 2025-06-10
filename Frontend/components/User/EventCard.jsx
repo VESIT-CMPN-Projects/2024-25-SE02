@@ -1,6 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const EventCard = ({ ride, viewDetails }) => {
   const datetime = new Date(ride.date_time);
@@ -18,16 +16,16 @@ const EventCard = ({ ride, viewDetails }) => {
       <View style={styles.detailsCard}>
         <Text style={styles.eventTitle} numberOfLines={1}>{ride.ride_name}</Text>
         <View style={styles.detailsContainer}>
-          <Image source={require("../assets/calendar.png")} style={styles.icon}></Image>
-          <Text style={styles.eventDetails}>{date}</Text>
+          <Image source={require("../../assets/calendar.png")} style={styles.icon}></Image>
+          <Text style={styles.details}>{date}</Text>
         </View>
         <View style={styles.detailsContainer}>
-          <Image source={require("../assets/clock.png")} style={styles.icon}></Image>
-          <Text style={styles.eventDetails}>{time}</Text>
+          <Image source={require("../../assets/clock.png")} style={styles.icon}></Image>
+          <Text style={styles.details}>{time}</Text>
         </View>
         <View style={styles.detailsContainer}>
-          <Image source={require("../assets/location.png")} style={styles.icon}></Image>
-          <Text style={styles.eventDetails} numberOfLines={1}>{ride.start_location}</Text>
+          <Image source={require("../../assets/location.png")} style={styles.icon}></Image>
+          <Text style={styles.details} numberOfLines={1}>{ride.start_location}</Text>
         </View>
       </View>
 
@@ -59,12 +57,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginVertical: 5
   },
-  eventDetailsContainer: {
+  detailsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 2,
+    paddingHorizontal: 8
   },
-  eventDetails: {
+  details: {
     marginLeft: 5,
     paddingVertical: 3,
     color: "#666"
@@ -89,12 +87,5 @@ const styles = StyleSheet.create({
     height: 16,
     width: 16,
     marginRight: 10
-  },
-  detailsContainer: {
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  details: {
-    marginVertical: 4,
-  },
+  }
 });

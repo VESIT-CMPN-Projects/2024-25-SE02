@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../AuthContext";
 
 const Sidebar = ({ onChangeTab, activeTab }) => {
   const navigation = useNavigation();
+  const { logout } = useContext(AuthContext);
 
   const links = [
     { label: "Dashboard", icon: "dashboard", value: "dashboard" },
@@ -15,6 +17,7 @@ const Sidebar = ({ onChangeTab, activeTab }) => {
 
   const handleTabChange = (value) => {
     if (value === "logout") {
+      logout();
       navigation.navigate("Login"); 
     } else {
       onChangeTab(value);

@@ -9,12 +9,20 @@ import {
   Alert,
 } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../AuthContext";
+import useFetch from "../Custom Hooks/useFetch";
 
 const RideDetails = ({ navigation, route }) => {
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
+
+  const getRide = (data) => {
+    return data.filter(reg => reg.user_id._id === user._id && reg.ride_id._id === ride._id);
+  };
+
+  const { data, loading } = useFetch("/registrations", {}, getRide);
+  
   const ride = route.params?.ride;
-  const isEnrolledRide = route.params?.isEnrolledRide
+  const isEnrolledRide = data && data.length ? true : false;
 
   if (!ride) {
     return (
@@ -32,9 +40,12 @@ const RideDetails = ({ navigation, route }) => {
     year: 'numeric',
   });
 
-  const time = (datetime.getHours() > 12 ? datetime.getHours() - 12 : datetime.getHours()).toString().padStart(2, '0')
-   + ":" + datetime.getMinutes().toString().padStart(2, '0')
-   + " " + (datetime.getHours() >= 12 ? "PM" : "AM");
+  const time = datetime.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit"
+  })
+  .replace(/am|pm/g, match => match.toUpperCase())
+  .replace(/^[0-9]{1}:/g, match => "0" + match);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 20 }}>
@@ -59,7 +70,6 @@ const RideDetails = ({ navigation, route }) => {
           <MaterialIcons name="event" size={18} color="#666" />
           <Text style={styles.dateText}>
             {date}  •  {time}
-            {/* {ride.date}, {ride.day} • {ride.time} */}
           </Text>
         </View>
 
@@ -100,7 +110,8 @@ const RideDetails = ({ navigation, route }) => {
           </View>
           <Text style={styles.totalRidersText}>Total: 50 riders</Text>
         </View>
-        {!isEnrolledRide &&
+
+        {!loading && !isEnrolledRide &&
           <TouchableOpacity style={styles.registerButton} onPress={() => {
             if(user) {
               navigation.navigate("RideEnrollment", { ride })
@@ -117,7 +128,7 @@ const RideDetails = ({ navigation, route }) => {
         <Text style={styles.rideLeadersTitle}>Ride Leaders</Text>
         <View style={styles.rideLeaderContainer}>
           <Image
-            source={require("../assets/leader1.png")}
+            source={require("../../assets/leader1.png")}
             style={styles.leaderImage}
           />
           <View>
@@ -130,7 +141,7 @@ const RideDetails = ({ navigation, route }) => {
         </View>
         <View style={styles.rideLeaderContainer}>
           <Image
-            source={require("../assets/leader2.png")}
+            source={require("../../assets/leader2.png")}
             style={styles.leaderImage}
           />
           <View>
