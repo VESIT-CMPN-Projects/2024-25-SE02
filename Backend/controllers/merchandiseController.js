@@ -3,9 +3,15 @@ const Merchandise = require("../models/merchandiseModel");
 const getAllMerchandise = async (req, res) => {
   try {
     const merchandise = await Merchandise.find();
-    res.status(200).json(merchandise);
+    res.status(200).json({
+      success: true,
+      data: merchandise
+    });
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch merchandise items" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch merchandise items"
+    });
   }
 };
 

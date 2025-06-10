@@ -36,6 +36,7 @@ const addRegistration = async (req, res) => {
     await newRegistration.save();
     res.status(201).json({
       success: true,
+      message: "Successful Registration",
       data: newRegistration
     });
   } catch (error) {

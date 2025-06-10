@@ -36,9 +36,16 @@ const addRide = async (req, res) => {
       organizer_id,
     });
     await newRide.save();
-    res.status(201).json({ message: "Ride added successfully", ride: newRide });
+    res.status(201).json({
+      success: true,
+      message: "Ride added successfully",
+      data: newRide });
   } catch (error) {
-    res.status(400).json({ message: "Error adding ride", error });
+    res.status(400).json({
+      success: false,
+      message: "Error adding ride",
+      error
+    });
   }
 };
 
